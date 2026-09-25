@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres — ParcelFlow</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="app-body">
+<div class="app-shell">
+    <div th:replace="~{fragments/shell :: sidebar('client','parametres')}"></div>
+
+    <div class="app-main">
+        <div th:replace="~{fragments/shell :: topbar('client', ${username})}"></div>
+
+        <main class="app-content" style="max-width: 560px;">
+            <div class="app-content-header">
+                <h1>Paramètres</h1>
+                <p>Vos informations de profil.</p>
+            </div>
+
+            <div class="panel" style="text-align:center; padding:28px 20px;">
+                <div class="avatar-sm" style="width:64px; height:64px; font-size:24px; margin:0 auto 14px;" th:text="${#strings.substring(username,0,1)}">U</div>
+                <h2 style="margin:0 0 4px; font-size:19px;" th:text="${username}">Nom</h2>
+                <p style="color:var(--text-muted); font-size:13.5px; margin:2px 0;" th:text="${email}">email</p>
+                <p style="color:var(--text-muted); font-size:13.5px; margin:2px 0;" th:text="${telephone}">téléphone</p>
+            </div>
+
+            <p class="hint" style="text-align:center; margin-top:16px;">
+                La modification du profil et les préférences de notification arrivent bientôt.
+            </p>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/shell :: bottomnav('client','parametres')}"></div>
+</div>
+</body>
+</html>

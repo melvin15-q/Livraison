@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi — ParcelFlow Admin</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="app-body">
+<div class="app-shell">
+    <div th:replace="~{fragments/shell :: sidebar('admin','suivi')}"></div>
+
+    <div class="app-main">
+        <div th:replace="~{fragments/shell :: topbar('admin', ${username})}"></div>
+
+        <main class="app-content">
+            <div class="app-content-header">
+                <h1>Suivi</h1>
+                <p>Commandes validées ou en cours de livraison.</p>
+            </div>
+
+            <div class="panel">
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Destinataire</th>
+                                <th>Zone</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="c : ${commandes}">
+                                <td th:text="'#PF-' + ${c.id}">#PF-0</td>
+                                <td th:text="${c.client.username}">Client</td>
+                                <td class="wrap" th:text="${c.nomDestinataire}">Destinataire</td>
+                                <td th:text="${c.codePostalVilleDestinataire}">Zone</td>
+                                <td><span th:class="'status-badge status-' + ${c.statut}" th:text="${c.statut}">STATUT</span></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(commandes)}">
+                                <td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">Rien en cours actuellement.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/shell :: bottomnav('admin','suivi')}"></div>
+</div>
+</body>
+</html>

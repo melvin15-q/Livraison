@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres — ParcelFlow Admin</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="app-body">
+<div class="app-shell">
+    <div th:replace="~{fragments/shell :: sidebar('admin','parametres')}"></div>
+
+    <div class="app-main">
+        <div th:replace="~{fragments/shell :: topbar('admin', ${username})}"></div>
+
+        <main class="app-content" style="max-width: 640px;">
+            <div class="app-content-header">
+                <h1>Paramètres</h1>
+                <p>Compte administrateur et gestion des livreurs.</p>
+            </div>
+
+            <div class="panel" style="text-align:center; padding:28px 20px; margin-bottom:16px;">
+                <div class="avatar-sm" style="width:64px; height:64px; font-size:24px; margin:0 auto 14px;" th:text="${#strings.substring(username,0,1)}">A</div>
+                <h2 style="margin:0 0 4px; font-size:19px;" th:text="${username}">Nom</h2>
+                <p style="color:var(--text-muted); font-size:13.5px; margin:2px 0;" th:text="${email}">email</p>
+                <p style="color:var(--text-muted); font-size:13.5px; margin:2px 0;" th:text="${telephone}">téléphone</p>
+            </div>
+
+            <!-- Gestion des livreurs -->
+            <div class="panel" style="margin-bottom:16px;">
+                <div class="panel-head">
+                    <h2>Livreurs</h2>
+                    <span class="pill" th:text="${#lists.size(livreurs)} + ' inscrit(s)'">0</span>
+                </div>
+
+                <div class="people-list" style="margin-bottom: 18px;">
+                    <div class="people-row" th:each="l : ${livreurs}">
+                        <div class="avatar-sm" th:text="${#strings.substring(l.username,0,1)}">L</div>
+                        <div>
+                            <div class="name" th:text="${l.username}">Nom</div>
+                            <div class="meta" th:text="${l.email} + ' · ' + ${l.telephone}">contact</div>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(livreurs)}" style="text-align:center; color:var(--text-muted); padding:12px 0; font-size:13.5px;">
+                        Aucun livreur enregistré pour le moment.
+                    </div>
+                </div>
+
+                <p class="alert alert-error" th:if="${errorLivreur}" th:text="${errorLivreur}"></p>
+                <p class="alert alert-success" th:if="${param.livreurCree}">Compte livreur créé avec succès.</p>
+
+                <form method="post" th:action="@{/admin/parametres/livreurs}" style="border-top:1px solid #f0f1f7; padding-top:16px;">
+                    <div class="form-section-head" style="margin-bottom:14px;">
+                        <div class="icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                        </div>
+                        <h3>Ajouter un livreur</h3>
+                    </div>
+
+                    <div class="field">
+                        <label for="nomComplet">Nom complet</label>
+                        <div class="input-wrap">
+                            <input id="nomComplet" type="text" name="nomComplet" placeholder="ex: Thomas Laurent" required>
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="field">
+                            <label for="email">Email</label>
+                            <div class="input-wrap">
+                                <input id="email" type="email" name="email" placeholder="thomas@parcelflow.com" required>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="telephone">Téléphone</label>
+                            <div class="input-wrap">
+                                <input id="telephone" type="tel" name="telephone" placeholder="+237 6 12 34 56 78" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="password">Mot de passe provisoire</label>
+                        <div class="input-wrap">
+                            <input id="password" type="password" name="password" minlength="8" placeholder="••••••••" required>
+                            <button type="button" class="toggle-eye" data-target="password" aria-label="Afficher le mot de passe">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                        <p class="hint">À communiquer au livreur — il pourra le changer plus tard depuis son profil.</p>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        Créer le compte livreur
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                    </button>
+                </form>
+            </div>
+
+            <p class="hint" style="text-align:center;">
+                Modification du profil admin et préférences générales à venir.
+            </p>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/shell :: bottomnav('admin','parametres')}"></div>
+</div>
+<script th:src="@{/js/auth.js}"></script>
+</body>
+</html>

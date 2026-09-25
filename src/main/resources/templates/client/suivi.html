@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi — ParcelFlow</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="app-body">
+<div class="app-shell">
+    <div th:replace="~{fragments/shell :: sidebar('client','suivi')}"></div>
+
+    <div class="app-main">
+        <div th:replace="~{fragments/shell :: topbar('client', ${username})}"></div>
+
+        <main class="app-content" style="max-width: 640px;">
+            <div class="app-content-header">
+                <h1>Suivi</h1>
+                <p>Vos expéditions en cours d'acheminement.</p>
+            </div>
+
+            <div class="panel tracking-card" th:each="c : ${commandes}" style="margin-bottom:16px;">
+                <div class="panel-head">
+                    <h2 th:text="'Commande #' + ${c.id}">Commande</h2>
+                    <span th:class="'status-badge status-' + ${c.statut}" th:text="${c.statut}">STATUT</span>
+                </div>
+                <div class="route-point">
+                    <div class="route-dot"></div>
+                    <div>
+                        <div class="route-label">Point d'enlèvement</div>
+                        <div class="route-title" th:text="${c.adresseRamassage}">Adresse</div>
+                    </div>
+                </div>
+                <div class="route-point">
+                    <div class="route-dot" style="background: var(--accent-rust);"></div>
+                    <div>
+                        <div class="route-label">Destination</div>
+                        <div class="route-title" th:text="${c.nomDestinataire}">Destinataire</div>
+                        <div class="route-sub" th:text="${c.adresseLivraison}">Adresse</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel" th:if="${#lists.isEmpty(commandes)}">
+                <p style="text-align:center; color:var(--text-muted);">Aucune expédition en cours actuellement.</p>
+            </div>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/shell :: bottomnav('client','suivi')}"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Admin — ParcelFlow</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="app-body">
+<div class="app-shell">
+    <div th:replace="~{fragments/shell :: sidebar('admin','dashboard')}"></div>
+
+    <div class="app-main">
+        <div th:replace="~{fragments/shell :: topbar('admin', ${username})}"></div>
+
+        <main class="app-content">
+            <div class="app-toolbar">
+                <div class="app-content-header">
+                    <h1>Espace Admin</h1>
+                    <p>Vue d'ensemble de la performance logistique en temps réel.</p>
+                </div>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-card-head">
+                        <span class="stat-card-label">Livraisons</span>
+                        <span class="stat-card-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                        </span>
+                    </div>
+                    <div class="stat-card-value" th:text="${totalCommandes}">0</div>
+                    <div class="stat-card-sub" th:text="${commandesEnCours} + ' en cours · ' + ${commandesTerminees} + ' livrées'">—</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-head">
+                        <span class="stat-card-label">Livreurs</span>
+                        <span class="stat-card-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+                        </span>
+                    </div>
+                    <div class="stat-card-value" th:text="${livreursActifs} + ' / ' + ${totalLivreurs}">0 / 0</div>
+                    <div class="stat-card-sub">Actifs sur le terrain</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-head">
+                        <span class="stat-card-label">Clients</span>
+                        <span class="stat-card-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </span>
+                    </div>
+                    <div class="stat-card-value" th:text="${totalClients}">0</div>
+                    <div class="stat-card-sub">Comptes enregistrés</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-head">
+                        <span class="stat-card-label">Revenu (ce mois)</span>
+                        <span class="stat-card-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        </span>
+                    </div>
+                    <div class="stat-card-value" th:text="${#numbers.formatDecimal(revenuMoisCourant, 0, 'COMMA', 0, 'POINT')} + ' F'">0 F</div>
+                    <div class="stat-card-sub positive">Commandes livrées, mois en cours</div>
+                </div>
+            </div>
+
+            <div class="panel-grid two-cols">
+                <div class="panel">
+                    <div class="panel-head">
+                        <h2>Dernières livraisons</h2>
+                        <span class="pill">Aperçu</span>
+                    </div>
+                    <div class="data-table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Colis</th>
+                                    <th>Client</th>
+                                    <th>Livreur</th>
+                                    <th>Zone</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${dernieresLivraisons}">
+                                    <td th:text="'#PF-' + ${item.id}">#PF-0</td>
+                                    <td th:text="${item.client}">Client</td>
+                                    <td th:text="${item.livreur}">—</td>
+                                    <td th:text="${item.zone}">Zone</td>
+                                    <td><span th:class="'status-badge status-' + ${item.statut}" th:text="${item.statut}">STATUT</span></td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(dernieresLivraisons)}">
+                                    <td colspan="5" style="text-align:center; color:var(--text-muted);">Aucune commande pour le moment.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top:14px; text-align:right;">
+                        <a th:href="@{/admin/orders}" class="link-small">Voir toutes les expéditions →</a>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <h2>Livreurs</h2>
+                        <span class="pill" th:text="${totalLivreurs} + ' au total'">0</span>
+                    </div>
+                    <div class="people-list">
+                        <div class="people-row" th:each="l : ${livreurs}">
+                            <div class="avatar-sm" th:text="${#strings.substring(l.username,0,1)}">L</div>
+                            <div>
+                                <div class="name" th:text="${l.username}">Nom</div>
+                                <div class="meta" th:text="${l.telephone}">Téléphone</div>
+                            </div>
+                            <span class="tag tag-available">Disponible</span>
+                        </div>
+                        <div th:if="${#lists.isEmpty(livreurs)}" style="text-align:center; color:var(--text-muted); padding:16px 0;">
+                            Aucun livreur enregistré.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/shell :: bottomnav('admin','dashboard')}"></div>
+</div>
+</body>
+</html>

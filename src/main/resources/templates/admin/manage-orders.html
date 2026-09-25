@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expéditions — ParcelFlow Admin</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="app-body">
+<div class="app-shell">
+    <div th:replace="~{fragments/shell :: sidebar('admin','orders')}"></div>
+
+    <div class="app-main">
+        <div th:replace="~{fragments/shell :: topbar('admin', ${username})}"></div>
+
+        <main class="app-content">
+            <div class="app-content-header">
+                <h1>Expéditions</h1>
+                <p>Valider les commandes et assigner un livreur.</p>
+            </div>
+
+            <p class="alert alert-success" th:if="${param.validated}">Commande validée.</p>
+            <p class="alert alert-success" th:if="${param.assigned}">Livreur assigné avec succès.</p>
+            <p class="alert alert-error" th:if="${param.error}">Une erreur est survenue — vérifiez que la commande est bien validée avant assignation.</p>
+
+            <div class="panel">
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Destinataire</th>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th>Statut</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="order : ${orders}">
+                                <td th:text="'#PF-' + ${order.id}">#PF-0</td>
+                                <td th:text="${order.client.username}">Client</td>
+                                <td class="wrap" th:text="${order.nomDestinataire}">Destinataire</td>
+                                <td th:text="${#temporals.format(order.dateCommande, 'dd/MM HH:mm')}">Date</td>
+                                <td th:text="${#numbers.formatDecimal(order.montantTotal, 0, 'COMMA', 0, 'POINT')} + ' F'">0 F</td>
+                                <td><span th:class="'status-badge status-' + ${order.statut}" th:text="${order.statut}">STATUT</span></td>
+                                <td>
+                                    <!-- Commande en attente : bouton de validation -->
+                                    <form th:if="${order.statut.name() == 'EN_ATTENTE'}" method="post"
+                                          th:action="@{'/admin/orders/' + ${order.id} + '/validate'}" style="display:inline;">
+                                        <button type="submit" class="btn-sm btn-sm-validate">Valider</button>
+                                    </form>
+
+                                    <!-- Commande livrée : bouton de clôture -->
+                                    <form th:if="${order.statut.name() == 'LIVREE'}" method="post"
+                                          th:action="@{'/admin/orders/' + ${order.id} + '/close'}" style="display:inline;">
+                                        <button type="submit" class="btn-sm btn-sm-validate" style="background-color: var(--brand-blue); color: white;">Clôturer</button>
+                                    </form>
+
+                                    <!-- Commande validée : formulaire d'assignation -->
+                                    <form th:if="${order.statut.name() == 'VALIDEE'}" method="post"
+                                          th:action="@{'/admin/orders/' + ${order.id} + '/assign'}"
+                                          style="display:flex; gap:6px; align-items:center;">
+                                        <select name="livreurId" required
+                                                style="padding:6px 8px; border-radius:8px; border:1.5px solid var(--input-border); font-size:12px;">
+                                            <option value="" disabled selected>Livreur…</option>
+                                            <option th:each="l : ${livreurs}" th:value="${l.id}" th:text="${l.username}">Nom</option>
+                                        </select>
+                                        <button type="submit" class="btn-sm btn-sm-assign">Assigner</button>
+                                    </form>
+
+                                    <span th:if="${order.statut.name() != 'EN_ATTENTE' and order.statut.name() != 'VALIDEE'}"
+                                          style="color:var(--text-muted); font-size:12.5px;">—</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(orders)}">
+                                <td colspan="7" style="text-align:center; color:var(--text-muted); padding:20px;">Aucune commande pour le moment.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="hint" th:if="${#lists.isEmpty(livreurs)}" style="margin-top:12px;">
+                    Aucun compte livreur enregistré — l'assignation sera possible dès qu'un livreur existera.
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/shell :: bottomnav('admin','orders')}"></div>
+</div>
+</body>
+</html>

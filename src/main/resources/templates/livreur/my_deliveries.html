@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Livraisons — ParcelFlow</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .delivery-item {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: var(--card-shadow);
+            border-left: 5px solid var(--accent-rust);
+            margin-bottom: 14px;
+        }
+        .delivery-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .delivery-header h3 { margin: 0; font-size: 16px; }
+        .delivery-details { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+        .action-row { margin-top: 15px; display: flex; gap: 10px; }
+        .btn-status {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1.5px solid var(--brand-blue);
+            background: transparent;
+            color: var(--brand-blue);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn-status.completed { border-color: #1e7e42; color: #1e7e42; }
+    </style>
+</head>
+<body class="app-body">
+<div class="app-shell">
+    <div th:replace="~{fragments/shell :: sidebar('livreur','deliveries')}"></div>
+
+    <div class="app-main">
+        <div th:replace="~{fragments/shell :: topbar('livreur', ${username})}"></div>
+
+        <main class="app-content" style="max-width: 640px;">
+            <div class="app-content-header">
+                <h1 th:text="'Bonjour, ' + ${username}">Bonjour</h1>
+                <p>Voici vos livraisons à effectuer.</p>
+            </div>
+
+            <div th:each="delivery : ${deliveries}" class="delivery-item">
+                <div class="delivery-header">
+                    <h3 th:text="'Livraison #' + ${delivery.id}">#0</h3>
+                    <span th:class="'status-badge status-' + ${delivery.statut}" th:text="${delivery.statut}">STATUT</span>
+                </div>
+                <div class="delivery-details">
+                    <p><strong>Commande :</strong> #<span th:text="${delivery.commande.id}">0</span></p>
+                    <p><strong>Destinataire :</strong> <span th:text="${delivery.commande.nomDestinataire}">Nom</span></p>
+                    <p><strong>Adresse :</strong> <span th:text="${delivery.adresseLivraison}">Adresse</span></p>
+                    <p><strong>Téléphone :</strong> <span th:text="${delivery.commande.telephoneDestinataire}">Téléphone</span></p>
+                    <p><strong>Client :</strong> <span th:text="${delivery.commande.client.username}">Nom</span></p>
+                </div>
+
+                <div class="action-row">
+                    <form th:if="${delivery.statut.name() == 'ASSIGNEE'}" method="post" th:action="@{/livreur/deliveries/{id}/status(id=${delivery.id})}" style="flex:1;">
+                        <input type="hidden" name="status" value="RECUPEREE">
+                        <button type="submit" class="btn-status">Récupérer le colis</button>
+                    </form>
+                    <form th:if="${delivery.statut.name() == 'RECUPEREE'}" method="post" th:action="@{/livreur/deliveries/{id}/status(id=${delivery.id})}" style="flex:1;">
+                        <input type="hidden" name="status" value="LIVREE">
+                        <button type="submit" class="btn-status completed">Marquer comme Livré</button>
+                    </form>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(deliveries)}" class="panel" style="text-align:center; color: var(--text-muted);">
+                Aucune livraison assignée pour le moment.
+            </div>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/shell :: bottomnav('livreur','deliveries')}"></div>
+</div>
+</body>
+</html>

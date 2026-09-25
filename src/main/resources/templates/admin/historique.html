@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique — ParcelFlow Admin</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="app-body">
+<div class="app-shell">
+    <div th:replace="~{fragments/shell :: sidebar('admin','historique')}"></div>
+
+    <div class="app-main">
+        <div th:replace="~{fragments/shell :: topbar('admin', ${username})}"></div>
+
+        <main class="app-content">
+            <div class="app-content-header">
+                <h1>Historique</h1>
+                <p>Commandes livrées ou annulées.</p>
+            </div>
+
+            <div class="panel">
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Destinataire</th>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="c : ${commandes}">
+                                <td th:text="'#PF-' + ${c.id}">#PF-0</td>
+                                <td th:text="${c.client.username}">Client</td>
+                                <td class="wrap" th:text="${c.nomDestinataire}">Destinataire</td>
+                                <td th:text="${#temporals.format(c.dateCommande, 'dd/MM/yyyy')}">Date</td>
+                                <td th:text="${#numbers.formatDecimal(c.montantTotal, 0, 'COMMA', 0, 'POINT')} + ' F'">0 F</td>
+                                <td><span th:class="'status-badge status-' + ${c.statut}" th:text="${c.statut}">STATUT</span></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(commandes)}">
+                                <td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">Aucune commande terminée pour le moment.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/shell :: bottomnav('admin','historique')}"></div>
+</div>
+</body>
+</html>

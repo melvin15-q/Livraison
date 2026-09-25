@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Espace — ParcelFlow</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="app-body">
+<div class="app-shell">
+    <div th:replace="~{fragments/shell :: sidebar('client','espace')}"></div>
+
+    <div class="app-main">
+        <div th:replace="~{fragments/shell :: topbar('client', ${username})}"></div>
+
+        <main class="app-content">
+            <div class="app-content-header">
+                <h1 th:text="'Bonjour, ' + ${username}">Bonjour</h1>
+                <p>Suivez votre course active ou programmez une nouvelle expédition.</p>
+            </div>
+
+            <p class="alert alert-success" th:if="${param.success}">Votre expédition a été enregistrée !</p>
+
+            <div class="panel-grid two-cols">
+
+                <!-- Livraison active -->
+                <div class="panel tracking-card" th:if="${commandeActive != null}">
+                    <div class="panel-head">
+                        <h2 th:text="'Commande #' + ${commandeActive.id}">Commande</h2>
+                        <span class="pill" th:text="${commandeActive.statut}">STATUT</span>
+                    </div>
+
+                    <div class="progress-steps">
+                        <div class="progress-step done">
+                            <div class="bar"></div>
+                            <div class="label">Confirmé</div>
+                        </div>
+                        <div th:class="'progress-step' + (${livraisonActive != null} ? ' done' : '')">
+                            <div class="bar"></div>
+                            <div class="label">Récupéré</div>
+                        </div>
+                        <div th:class="'progress-step' + (${livraisonActive != null and livraisonActive.statut.name() == 'RECUPEREE'} ? ' current' : (${livraisonActive != null and livraisonActive.statut.name() == 'LIVREE'} ? ' done' : ''))">
+                            <div class="bar"></div>
+                            <div class="label">En route</div>
+                        </div>
+                        <div th:class="'progress-step' + (${livraisonActive != null and livraisonActive.statut.name() == 'LIVREE'} ? ' done' : '')">
+                            <div class="bar"></div>
+                            <div class="label">Livré</div>
+                        </div>
+                    </div>
+
+                    <div class="route-point">
+                        <div class="route-dot"></div>
+                        <div>
+                            <div class="route-label">Point d'enlèvement</div>
+                            <div class="route-title" th:text="${commandeActive.adresseRamassage}">Adresse</div>
+                            <div class="route-sub" th:text="${commandeActive.villeRamassage}">Ville</div>
+                        </div>
+                    </div>
+                    <div class="route-point">
+                        <div class="route-dot" style="background: var(--accent-rust);"></div>
+                        <div>
+                            <div class="route-label">Destination</div>
+                            <div class="route-title" th:text="${commandeActive.nomDestinataire}">Destinataire</div>
+                            <div class="route-sub" th:text="${commandeActive.adresseLivraison}">Adresse</div>
+                        </div>
+                    </div>
+
+                    <div th:if="${livraisonActive != null}" style="display:flex; align-items:center; gap:10px; margin-top:14px; padding-top:14px; border-top:1px solid #f0f1f7;">
+                        <div class="avatar-sm" th:text="${#strings.substring(livraisonActive.livreur.username,0,1)}">L</div>
+                        <div>
+                            <div class="name" style="font-size:13.5px;" th:text="${livraisonActive.livreur.username}">Livreur</div>
+                            <div class="meta">Coursier assigné</div>
+                        </div>
+                    </div>
+                    <div th:if="${livraisonActive == null}" class="hint" style="margin-top:14px;">
+                        En attente d'assignation à un livreur par l'administration.
+                    </div>
+                </div>
+
+                <div class="panel" th:if="${commandeActive == null}">
+                    <div class="panel-head"><h2>Aucune course active</h2></div>
+                    <p style="color: var(--text-muted); font-size: 13.5px;">Vous n'avez pas d'expédition en cours actuellement.</p>
+                </div>
+
+                <!-- Nouvelle expédition -->
+                <div class="panel">
+                    <div class="panel-head">
+                        <h2>Nouvelle expédition</h2>
+                    </div>
+                    <div class="form-section-head" style="margin-bottom:14px;">
+                        <div class="icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 13px; margin:0;">Prise en charge par un coursier en moins de 15 minutes.</p>
+                    </div>
+                    <a th:href="@{/client/orders/new}" class="btn-primary" style="text-decoration:none; display:flex;">
+                        Commander maintenant
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="panel" style="margin-top:16px;">
+                <div class="panel-head">
+                    <h2>Historique récent</h2>
+                    <a th:href="@{/client/orders}" class="link-small">Tout voir →</a>
+                </div>
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Destinataire</th>
+                                <th>Prix</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="c : ${historique}">
+                                <td th:text="${#temporals.format(c.dateCommande, 'dd MMM, HH:mm')}">Date</td>
+                                <td th:text="${c.nomDestinataire}">Destinataire</td>
+                                <td th:text="${#numbers.formatDecimal(c.montantTotal, 0, 'COMMA', 0, 'POINT')} + ' F'">0 F</td>
+                                <td><span th:class="'status-badge status-' + ${c.statut}" th:text="${c.statut}">STATUT</span></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(historique)}">
+                                <td colspan="4" style="text-align:center; color:var(--text-muted);">Aucune expédition pour le moment.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/shell :: bottomnav('client','espace')}"></div>
+</div>
+</body>
+</html>

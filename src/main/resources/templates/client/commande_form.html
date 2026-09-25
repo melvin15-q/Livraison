@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouvelle Expédition — ParcelFlow</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="app-body">
+<div class="app-shell">
+    <div th:replace="~{fragments/shell :: sidebar('client','new')}"></div>
+
+    <div class="app-main">
+        <div th:replace="~{fragments/shell :: topbar('client', ${username})}"></div>
+
+        <main class="app-content" style="max-width: 640px;">
+            <div class="app-content-header">
+                <h1>Nouvelle Expédition</h1>
+                <p>Configurez les détails de votre envoi avec précision.</p>
+            </div>
+
+            <p class="alert alert-error" th:if="${error}" th:text="${error}"></p>
+
+            <form method="post" th:action="@{/client/orders/new}">
+
+                <!-- Expéditeur -->
+                <div class="panel form-section">
+                    <div class="form-section-head">
+                        <div class="icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+                        </div>
+                        <h3>Expéditeur</h3>
+                    </div>
+
+                    <div class="field">
+                        <label for="nomExpediteur">Nom complet / Société</label>
+                        <div class="input-wrap">
+                            <input id="nomExpediteur" type="text" name="nomExpediteur" placeholder="ex: Jean Dupont" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="adresseRamassage">Adresse de ramassage</label>
+                        <div class="input-wrap">
+                            <input id="adresseRamassage" type="text" name="adresseRamassage" placeholder="Numéro et nom de rue" required>
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="field">
+                            <label for="codePostalRamassage">Code postal</label>
+                            <div class="input-wrap">
+                                <input id="codePostalRamassage" type="text" name="codePostalRamassage" placeholder="75001" required>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="villeRamassage">Ville</label>
+                            <div class="input-wrap">
+                                <input id="villeRamassage" type="text" name="villeRamassage" placeholder="Yaoundé" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Destinataire -->
+                <div class="panel form-section">
+                    <div class="form-section-head">
+                        <div class="icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <h3>Destinataire</h3>
+                    </div>
+
+                    <div class="field">
+                        <label for="nomDestinataire">Nom du destinataire</label>
+                        <div class="input-wrap">
+                            <input id="nomDestinataire" type="text" name="nomDestinataire" placeholder="ex: Marie Curie" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="adresseLivraison">Adresse de livraison</label>
+                        <div class="input-wrap">
+                            <input id="adresseLivraison" type="text" name="adresseLivraison" placeholder="Adresse complète" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="telephoneDestinataire">Téléphone</label>
+                        <div class="input-wrap">
+                            <span class="field-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            </span>
+                            <input id="telephoneDestinataire" type="tel" name="telephoneDestinataire" placeholder="+237 6 12 34 56 78" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="codePostalVilleDestinataire">Code postal / Ville</label>
+                        <div class="input-wrap">
+                            <input id="codePostalVilleDestinataire" type="text" name="codePostalVilleDestinataire" placeholder="69001 Lyon" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colis -->
+                <div class="panel form-section">
+                    <div class="form-section-head">
+                        <div class="icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                        </div>
+                        <h3>Colis</h3>
+                    </div>
+
+                    <div class="field">
+                        <label for="typeColis">Type de contenu</label>
+                        <div class="input-wrap">
+                            <select id="typeColis" name="typeColis" required
+                                    style="width:100%; padding:14px; border-radius:12px; border:1.5px solid var(--input-border); background:var(--input-bg); font-size:15px; color:var(--text-main); outline:none; appearance:none;">
+                                <option th:each="t : ${typesColis}" th:value="${t}" th:text="${t}">TYPE</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="field">
+                            <label for="poidsKg">Poids (kg)</label>
+                            <div class="input-wrap">
+                                <input id="poidsKg" type="number" step="0.1" min="0.1" name="poidsKg" placeholder="1.5" required>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="valeurDeclaree">Valeur déclarée (F)</label>
+                            <div class="input-wrap">
+                                <input id="valeurDeclaree" type="number" step="1" min="0" name="valeurDeclaree" placeholder="15000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field" style="border:1.5px dashed var(--input-border); border-radius:12px; padding:14px; text-align:center;">
+                        <label for="photoColis" style="cursor:pointer; text-transform:none; font-weight:600; color: var(--brand-blue); font-size:13.5px;">
+                            📷 Ajouter une photo du colis
+                        </label>
+                        <input id="photoColis" type="file" name="photoColis" accept="image/*" style="display:none;">
+                        <p class="hint" style="margin-top:6px;">Non stocké pour l'instant — champ visuel uniquement.</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Valider l'expédition
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </button>
+                <p class="hint" style="text-align:center; margin-top:10px;">
+                    Le tarif est estimé automatiquement selon le poids déclaré.
+                </p>
+            </form>
+        </main>
+    </div>
+
+    <div th:replace="~{fragments/shell :: bottomnav('client','new')}"></div>
+</div>
+</body>
+</html>
