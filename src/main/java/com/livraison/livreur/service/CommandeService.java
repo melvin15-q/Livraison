@@ -16,20 +16,43 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommandeService {
 
-    private static final double TARIF_BASE = 1000.0;      // FCFA
-    private static final double TARIF_PAR_KG = 300.0;      // FCFA / kg au-delà de 1kg
+    // Barème par distance — fourni par Daril
+    private static final double TARIF_0_2KM = 1000.0;
+    private static final double TARIF_2_5KM = 1500.0;
+    private static final double TARIF_5_8KM = 2000.0;
+    private static final double TARIF_8_12KM = 2500.0;
+    private static final double TARIF_PAR_KM_AU_DELA = 200.0; // au-delà de 12km, non couvert par le barème fourni — extrapolation à ajuster
+
+    // Supplément poids, ajouté par-dessus le tarif distance (hypothèse à valider : le barème fourni ne précise pas ce point)
+    private static final double SEUIL_POIDS_GRATUIT_KG = 2.0;
+    private static final double SURCHARGE_PAR_KG = 200.0;
 
     private final CommandeRepository commandeRepository;
+    private final WhatsAppNotificationService whatsAppNotificationService;
 
     /**
-     * Calcule une estimation tarifaire simple à partir du poids déclaré.
-     * Formule volontairement basique (tarif de base + surcharge au kg) : à affiner
-     * plus tard avec une vraie grille tarifaire (distance, zone, type de colis...).
+     * Frais de base selon la distance, d'après le barème :
+     * 0–2km: 1000F · 2–5km: 1500F · 5–8km: 2000F · 8–12km: 2500F
+     * Au-delà de 12km (non couvert par le barème), extrapolation à +200F/km — à ajuster si besoin.
      */
-    public double estimerTarif(Double poidsKg) {
-        double poids = poidsKg == null ? 1.0 : poidsKg;
-        double surcharge = Math.max(0, poids - 1.0) * TARIF_PAR_KG;
-        return TARIF_BASE + surcharge;
+    private double fraisDistance(double distanceKm) {
+        if (distanceKm <= 2) return TARIF_0_2KM;
+        if (distanceKm <= 5) return TARIF_2_5KM;
+        if (distanceKm <= 8) return TARIF_5_8KM;
+        if (distanceKm <= 12) return TARIF_8_12KM;
+        return TARIF_8_12KM + (distanceKm - 12) * TARIF_PAR_KM_AU_DELA;
+    }
+
+    /**
+     * Estimation tarifaire = frais de distance (barème) + supplément au poids
+     * au-delà de 2kg. Le supplément poids est une hypothèse de ma part, le
+     * barème fourni ne couvrant que la distance — à confirmer/ajuster.
+     */
+    public double estimerTarif(Double distanceKm, Double poidsKg) {
+        double distance = distanceKm == null ? 0 : distanceKm;
+        double poids = poidsKg == null ? 0 : poidsKg;
+        double surchargePoids = Math.max(0, poids - SEUIL_POIDS_GRATUIT_KG) * SURCHARGE_PAR_KG;
+        return fraisDistance(distance) + surchargePoids;
     }
 
     @Transactional
@@ -38,12 +61,13 @@ public class CommandeService {
                                     String codePostalRamassage, String villeRamassage,
                                     String nomDestinataire, String adresseLivraison,
                                     String telephoneDestinataire, String codePostalVilleDestinataire,
-                                    TypeColis typeColis, Double poidsKg, Double valeurDeclaree) {
+                                    TypeColis typeColis, Double poidsKg, Double valeurDeclaree,
+                                    Double distanceKm) {
 
         Commande commande = Commande.builder()
                 .client(client)
                 .dateCommande(LocalDateTime.now())
-                .montantTotal(estimerTarif(poidsKg))
+                .montantTotal(estimerTarif(distanceKm, poidsKg))
                 .statut(CommandeStatus.EN_ATTENTE)
                 .nomExpediteur(nomExpediteur)
                 .adresseRamassage(adresseRamassage)
@@ -56,8 +80,13 @@ public class CommandeService {
                 .typeColis(typeColis)
                 .poidsKg(poidsKg)
                 .valeurDeclaree(valeurDeclaree)
+                .distanceKm(distanceKm)
                 .build();
-        return commandeRepository.save(commande);
+        Commande saved = commandeRepository.save(commande);
+
+        whatsAppNotificationService.notifierNouvelleCommande(saved);
+
+        return saved;
     }
 
     public List<Commande> getClientCommandes(User client) {

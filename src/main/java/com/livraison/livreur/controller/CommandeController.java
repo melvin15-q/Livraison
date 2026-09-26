@@ -53,13 +53,14 @@ public class CommandeController {
                                @RequestParam TypeColis typeColis,
                                @RequestParam Double poidsKg,
                                @RequestParam(required = false) Double valeurDeclaree,
+                               @RequestParam Double distanceKm,
                                @AuthenticationPrincipal UserPrincipal principal,
                                Model model) {
         try {
             User user = userService.findByEmail(principal.getEmail());
             commandeService.createCommande(user, nomExpediteur, adresseRamassage, codePostalRamassage,
                     villeRamassage, nomDestinataire, adresseLivraison, telephoneDestinataire,
-                    codePostalVilleDestinataire, typeColis, poidsKg, valeurDeclaree);
+                    codePostalVilleDestinataire, typeColis, poidsKg, valeurDeclaree, distanceKm);
             return "redirect:/client/espace?success";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -84,11 +85,5 @@ public class CommandeController {
     public String validateOrder(@PathVariable Long id) {
         commandeService.updateStatut(id, CommandeStatus.VALIDEE);
         return "redirect:/admin/orders?validated";
-    }
-
-    @PostMapping("/admin/orders/{id}/close")
-    public String closeOrder(@PathVariable Long id) {
-        commandeService.updateStatut(id, CommandeStatus.CLOTUREE);
-        return "redirect:/admin/orders?closed";
     }
 }

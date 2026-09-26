@@ -6,10 +6,10 @@
 <aside th:fragment="sidebar(role, active)" class="app-sidebar">
     <div class="app-sidebar-brand">
         <div class="mark">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <img th:src="@{/images/logo-icon.png}" alt="Livreur" style="width:26px; height:auto;">
         </div>
         <div>
-            <div class="name">ParcelFlow</div>
+            <div class="name">Livreur</div>
             <div class="subtitle">LOGISTIQUE URBAINE</div>
         </div>
     </div>
@@ -85,8 +85,8 @@
 <!-- ============ TOPBAR ============ -->
 <header th:fragment="topbar(role, username)" class="app-topbar">
     <div class="app-topbar-brand">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        ParcelFlow
+        <img th:src="@{/images/logo-icon.png}" alt="Livreur" style="width:22px; height:auto;">
+        Livreur
     </div>
 
     <div class="app-search">

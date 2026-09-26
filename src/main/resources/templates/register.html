@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ParcelFlow — S'inscrire</title>
+    <title>Livreur — S'inscrire</title>
+    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
     <link rel="stylesheet" th:href="@{/css/auth.css}">
 </head>
 <body>
@@ -14,7 +15,7 @@
             <a class="icon-btn" th:href="@{/login}" aria-label="Retour">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
             </a>
-            <span class="brand">ParcelFlow</span>
+            <span class="brand">Livreur</span>
         </div>
         <a class="icon-btn" th:href="@{/login}" aria-label="Compte">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
@@ -23,7 +24,7 @@
 
     <div class="card">
         <h1>S'inscrire</h1>
-        <p class="subtitle">Rejoignez ParcelFlow pour vos livraisons rapides et sécurisées.</p>
+        <p class="subtitle">Rejoignez Livreur pour vos livraisons rapides et sécurisées.</p>
 
         <p class="alert alert-error" th:if="${error}" th:text="${error}"></p>
 

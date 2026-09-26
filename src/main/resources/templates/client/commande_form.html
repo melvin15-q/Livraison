@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nouvelle Expédition — ParcelFlow</title>
+    <title>Nouvelle Expédition — Livreur</title>
+    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
     <link rel="stylesheet" th:href="@{/css/auth.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -119,16 +120,22 @@
                     </div>
                     <div class="form-grid-2">
                         <div class="field">
+                            <label for="distanceKm">Distance estimée (km)</label>
+                            <div class="input-wrap">
+                                <input id="distanceKm" type="number" step="0.1" min="0.1" name="distanceKm" placeholder="3.5" required>
+                            </div>
+                        </div>
+                        <div class="field">
                             <label for="poidsKg">Poids (kg)</label>
                             <div class="input-wrap">
                                 <input id="poidsKg" type="number" step="0.1" min="0.1" name="poidsKg" placeholder="1.5" required>
                             </div>
                         </div>
-                        <div class="field">
-                            <label for="valeurDeclaree">Valeur déclarée (F)</label>
-                            <div class="input-wrap">
-                                <input id="valeurDeclaree" type="number" step="1" min="0" name="valeurDeclaree" placeholder="15000">
-                            </div>
+                    </div>
+                    <div class="field">
+                        <label for="valeurDeclaree">Valeur déclarée (F)</label>
+                        <div class="input-wrap">
+                            <input id="valeurDeclaree" type="number" step="1" min="0" name="valeurDeclaree" placeholder="15000">
                         </div>
                     </div>
 
@@ -139,6 +146,25 @@
                         <input id="photoColis" type="file" name="photoColis" accept="image/*" style="display:none;">
                         <p class="hint" style="margin-top:6px;">Non stocké pour l'instant — champ visuel uniquement.</p>
                     </div>
+
+                    <div class="eta-box" style="margin-top:14px;">
+                        <div class="label">Estimation tarifaire</div>
+                        <div class="value" id="priceEstimate">— F</div>
+                    </div>
+
+                    <details style="margin-top:12px;">
+                        <summary class="link-small" style="cursor:pointer;">Voir le barème</summary>
+                        <table class="data-table" style="margin-top:8px;">
+                            <thead><tr><th>Distance</th><th>Frais</th></tr></thead>
+                            <tbody>
+                                <tr><td>0 – 2 km</td><td>1 000 F</td></tr>
+                                <tr><td>2 – 5 km</td><td>1 500 F</td></tr>
+                                <tr><td>5 – 8 km</td><td>2 000 F</td></tr>
+                                <tr><td>8 – 12 km</td><td>2 500 F</td></tr>
+                            </tbody>
+                        </table>
+                        <p class="hint">+ 200 F par kg au-delà de 2kg. Au-delà de 12km : +200 F/km.</p>
+                    </details>
                 </div>
 
                 <button type="submit" class="btn-primary">
@@ -146,7 +172,7 @@
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                 </button>
                 <p class="hint" style="text-align:center; margin-top:10px;">
-                    Le tarif est estimé automatiquement selon le poids déclaré.
+                    Le tarif définitif est recalculé et confirmé côté serveur à la validation.
                 </p>
             </form>
         </main>
@@ -154,5 +180,27 @@
 
     <div th:replace="~{fragments/shell :: bottomnav('client','new')}"></div>
 </div>
+<script th:src="@{/js/auth.js}"></script>
+<script>
+    function estimerPrix() {
+        var distance = parseFloat(document.getElementById('distanceKm').value) || 0;
+        var poids = parseFloat(document.getElementById('poidsKg').value) || 0;
+
+        var fraisDistance;
+        if (distance <= 2) fraisDistance = 1000;
+        else if (distance <= 5) fraisDistance = 1500;
+        else if (distance <= 8) fraisDistance = 2000;
+        else if (distance <= 12) fraisDistance = 2500;
+        else fraisDistance = 2500 + (distance - 12) * 200;
+
+        var surchargePoids = Math.max(0, poids - 2) * 200;
+        var total = fraisDistance + surchargePoids;
+
+        document.getElementById('priceEstimate').textContent = Math.round(total).toLocaleString('fr-FR') + ' F';
+    }
+
+    document.getElementById('distanceKm').addEventListener('input', estimerPrix);
+    document.getElementById('poidsKg').addEventListener('input', estimerPrix);
+</script>
 </body>
 </html>

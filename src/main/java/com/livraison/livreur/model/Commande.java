@@ -47,4 +47,5 @@ public class Commande {
     private TypeColis typeColis;
     private Double poidsKg;
     private Double valeurDeclaree;
+    private Double distanceKm;
 }

@@ -72,12 +72,13 @@ body {
   width: 64px;
   height: 64px;
   border-radius: 20px;
-  background: linear-gradient(145deg, var(--brand-blue), var(--brand-blue-dark));
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 4px auto 18px;
-  box-shadow: 0 12px 24px -10px rgba(36, 81, 224, 0.55);
+  box-shadow: 0 12px 24px -10px rgba(36, 81, 224, 0.35);
+  overflow: hidden;
 }
 
 .auth-header h1 {

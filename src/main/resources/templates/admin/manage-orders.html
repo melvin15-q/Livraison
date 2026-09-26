@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expéditions — ParcelFlow Admin</title>
+    <title>Expéditions — Livreur Admin</title>
+    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
     <link rel="stylesheet" th:href="@{/css/auth.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -51,12 +52,6 @@
                                     <form th:if="${order.statut.name() == 'EN_ATTENTE'}" method="post"
                                           th:action="@{'/admin/orders/' + ${order.id} + '/validate'}" style="display:inline;">
                                         <button type="submit" class="btn-sm btn-sm-validate">Valider</button>
-                                    </form>
-
-                                    <!-- Commande livrée : bouton de clôture -->
-                                    <form th:if="${order.statut.name() == 'LIVREE'}" method="post"
-                                          th:action="@{'/admin/orders/' + ${order.id} + '/close'}" style="display:inline;">
-                                        <button type="submit" class="btn-sm btn-sm-validate" style="background-color: var(--brand-blue); color: white;">Clôturer</button>
                                     </form>
 
                                     <!-- Commande validée : formulaire d'assignation -->

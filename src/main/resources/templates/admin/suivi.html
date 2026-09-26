@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi — ParcelFlow Admin</title>
+    <title>Suivi — Livreur Admin</title>
+    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
     <link rel="stylesheet" th:href="@{/css/auth.css}">
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
@@ -20,6 +21,8 @@
                 <p>Commandes validées ou en cours de livraison.</p>
             </div>
 
+            <p class="alert alert-success" th:if="${param.updated}">Statut mis à jour.</p>
+
             <div class="panel">
                 <div class="data-table-wrap">
                     <table class="data-table">
@@ -29,23 +32,57 @@
                                 <th>Client</th>
                                 <th>Destinataire</th>
                                 <th>Zone</th>
-                                <th>Statut</th>
+                                <th>Livreur</th>
+                                <th>Statut livraison</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="c : ${commandes}">
-                                <td th:text="'#PF-' + ${c.id}">#PF-0</td>
-                                <td th:text="${c.client.username}">Client</td>
-                                <td class="wrap" th:text="${c.nomDestinataire}">Destinataire</td>
-                                <td th:text="${c.codePostalVilleDestinataire}">Zone</td>
-                                <td><span th:class="'status-badge status-' + ${c.statut}" th:text="${c.statut}">STATUT</span></td>
+                            <tr th:each="item : ${items}">
+                                <td th:text="'#PF-' + ${item.commande.id}">#PF-0</td>
+                                <td th:text="${item.commande.client.username}">Client</td>
+                                <td class="wrap" th:text="${item.commande.nomDestinataire}">Destinataire</td>
+                                <td th:text="${item.commande.codePostalVilleDestinataire}">Zone</td>
+
+                                <td th:if="${item.livraison != null}" th:text="${item.livraison.livreur.username}">Livreur</td>
+                                <td th:if="${item.livraison == null}" style="color:var(--text-muted);">Non assigné</td>
+
+                                <td th:if="${item.livraison != null}">
+                                    <span th:class="'status-badge status-' + ${item.livraison.statut}" th:text="${item.livraison.statut}">STATUT</span>
+                                </td>
+                                <td th:if="${item.livraison == null}">
+                                    <span class="status-badge">En attente d'assignation</span>
+                                </td>
+
+                                <td>
+                                    <!-- Livraison assignée, pas encore récupérée -->
+                                    <form th:if="${item.livraison != null and item.livraison.statut.name() == 'ASSIGNEE'}"
+                                          method="post" th:action="@{'/admin/suivi/' + ${item.livraison.id} + '/status'}" style="display:inline;">
+                                        <input type="hidden" name="status" value="RECUPEREE">
+                                        <button type="submit" class="btn-sm btn-sm-assign">Marquer récupéré</button>
+                                    </form>
+
+                                    <!-- Colis récupéré, pas encore livré -->
+                                    <form th:if="${item.livraison != null and item.livraison.statut.name() == 'RECUPEREE'}"
+                                          method="post" th:action="@{'/admin/suivi/' + ${item.livraison.id} + '/status'}" style="display:inline;">
+                                        <input type="hidden" name="status" value="LIVREE">
+                                        <button type="submit" class="btn-sm btn-sm-validate">Marquer livré</button>
+                                    </form>
+
+                                    <span th:if="${item.livraison == null}" style="color:var(--text-muted); font-size:12.5px;">
+                                        Assigner un livreur depuis Expéditions
+                                    </span>
+                                </td>
                             </tr>
-                            <tr th:if="${#lists.isEmpty(commandes)}">
-                                <td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">Rien en cours actuellement.</td>
+                            <tr th:if="${#lists.isEmpty(items)}">
+                                <td colspan="7" style="text-align:center; color:var(--text-muted); padding:20px;">Rien en cours actuellement.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+                <p class="hint" style="margin-top:12px;">
+                    Ces boutons mettent à jour le statut à la place du livreur — pratique si le livreur n'utilise pas encore l'application et te confirme la livraison par téléphone.
+                </p>
             </div>
         </main>
     </div>

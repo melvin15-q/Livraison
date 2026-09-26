@@ -20,6 +20,7 @@ public class LivraisonService {
 
     private final LivraisonRepository livraisonRepository;
     private final CommandeRepository commandeRepository;
+    private final WhatsAppNotificationService whatsAppNotificationService;
 
     /**
      * Assigne un livreur à une commande validée. L'adresse de livraison est reprise
@@ -77,6 +78,8 @@ public class LivraisonService {
             Commande commande = livraison.getCommande();
             commande.setStatut(com.livraison.livreur.model.CommandeStatus.LIVREE);
             commandeRepository.save(commande);
+
+            whatsAppNotificationService.notifierLivraisonEffectuee(commande);
         }
 
         livraisonRepository.save(livraison);

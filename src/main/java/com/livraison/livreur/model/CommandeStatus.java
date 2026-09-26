@@ -5,6 +5,5 @@ public enum CommandeStatus {
     VALIDEE,
     EN_COURS_DE_LIVRAISON,
     LIVREE,
-    ANNULEE,
-    CLOTUREE
+    ANNULEE
 }
