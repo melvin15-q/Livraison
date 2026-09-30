@@ -382,6 +382,12 @@ body.app-body {
   white-space: normal;
 }
 
+@media (max-width: 640px) {
+  .col-hide-mobile {
+    display: none;
+  }
+}
+
 /* ---------- Liste "livreurs actifs" / activité ---------- */
 
 .people-list {

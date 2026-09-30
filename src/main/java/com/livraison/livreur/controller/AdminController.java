@@ -36,7 +36,7 @@ public class AdminController {
         model.addAttribute("totalClients", dashboardService.totalClients());
         model.addAttribute("revenuMoisCourant", dashboardService.revenuMoisCourant());
         model.addAttribute("dernieresLivraisons", dashboardService.dernieresLivraisons(6));
-        model.addAttribute("livreurs", dashboardService.livreursDisponibles());
+        model.addAttribute("livreurs", dashboardService.livreursAvecStatut());
         return "admin/dashboard";
     }
 
@@ -71,7 +71,7 @@ public class AdminController {
         model.addAttribute("username", principal.getUsername());
         model.addAttribute("email", principal.getUser().getEmail());
         model.addAttribute("telephone", principal.getUser().getTelephone());
-        model.addAttribute("livreurs", userService.findByRole(UserRole.LIVREUR));
+        model.addAttribute("livreurs", dashboardService.livreursAvecStatut());
         return "admin/parametres";
     }
 
@@ -89,7 +89,7 @@ public class AdminController {
             model.addAttribute("username", principal.getUsername());
             model.addAttribute("email", principal.getUser().getEmail());
             model.addAttribute("telephone", principal.getUser().getTelephone());
-            model.addAttribute("livreurs", userService.findByRole(UserRole.LIVREUR));
+            model.addAttribute("livreurs", dashboardService.livreursAvecStatut());
             model.addAttribute("errorLivreur", e.getMessage());
             return "admin/parametres";
         }

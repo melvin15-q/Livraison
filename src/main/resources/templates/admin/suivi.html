@@ -30,8 +30,8 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Client</th>
-                                <th>Destinataire</th>
-                                <th>Zone</th>
+                                <th class="col-hide-mobile">Destinataire</th>
+                                <th class="col-hide-mobile">Zone</th>
                                 <th>Livreur</th>
                                 <th>Statut livraison</th>
                                 <th>Action</th>
@@ -41,8 +41,8 @@
                             <tr th:each="item : ${items}">
                                 <td th:text="'#PF-' + ${item.commande.id}">#PF-0</td>
                                 <td th:text="${item.commande.client.username}">Client</td>
-                                <td class="wrap" th:text="${item.commande.nomDestinataire}">Destinataire</td>
-                                <td th:text="${item.commande.codePostalVilleDestinataire}">Zone</td>
+                                <td class="wrap col-hide-mobile" th:text="${item.commande.nomDestinataire}">Destinataire</td>
+                                <td class="col-hide-mobile" th:text="${item.commande.codePostalVilleDestinataire}">Zone</td>
 
                                 <td th:if="${item.livraison != null}" th:text="${item.livraison.livreur.username}">Livreur</td>
                                 <td th:if="${item.livraison == null}" style="color:var(--text-muted);">Non assigné</td>

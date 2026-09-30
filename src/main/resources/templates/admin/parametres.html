@@ -36,12 +36,14 @@
                 </div>
 
                 <div class="people-list" style="margin-bottom: 18px;">
-                    <div class="people-row" th:each="l : ${livreurs}">
-                        <div class="avatar-sm" th:text="${#strings.substring(l.username,0,1)}">L</div>
+                    <div class="people-row" th:each="item : ${livreurs}">
+                        <div class="avatar-sm" th:text="${#strings.substring(item.livreur.username,0,1)}">L</div>
                         <div>
-                            <div class="name" th:text="${l.username}">Nom</div>
-                            <div class="meta" th:text="${l.email} + ' · ' + ${l.telephone}">contact</div>
+                            <div class="name" th:text="${item.livreur.username}">Nom</div>
+                            <div class="meta" th:text="${item.livreur.email} + ' · ' + ${item.livreur.telephone}">contact</div>
                         </div>
+                        <span th:if="${!item.occupe}" class="tag tag-available">Disponible</span>
+                        <span th:if="${item.occupe}" class="tag tag-busy">Occupé</span>
                     </div>
                     <div th:if="${#lists.isEmpty(livreurs)}" style="text-align:center; color:var(--text-muted); padding:12px 0; font-size:13.5px;">
                         Aucun livreur enregistré pour le moment.

@@ -28,7 +28,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Client</th>
-                                <th>Destinataire</th>
+                                <th class="col-hide-mobile">Destinataire</th>
                                 <th>Date</th>
                                 <th>Montant</th>
                                 <th>Statut</th>
@@ -38,7 +38,7 @@
                             <tr th:each="c : ${commandes}">
                                 <td th:text="'#PF-' + ${c.id}">#PF-0</td>
                                 <td th:text="${c.client.username}">Client</td>
-                                <td class="wrap" th:text="${c.nomDestinataire}">Destinataire</td>
+                                <td class="wrap col-hide-mobile" th:text="${c.nomDestinataire}">Destinataire</td>
                                 <td th:text="${#temporals.format(c.dateCommande, 'dd/MM/yyyy')}">Date</td>
                                 <td th:text="${#numbers.formatDecimal(c.montantTotal, 0, 'COMMA', 0, 'POINT')} + ' F'">0 F</td>
                                 <td><span th:class="'status-badge status-' + ${c.statut}" th:text="${c.statut}">STATUT</span></td>

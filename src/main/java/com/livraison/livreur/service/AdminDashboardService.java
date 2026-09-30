@@ -91,6 +91,23 @@ public class AdminDashboardService {
         return items;
     }
 
+    /**
+     * Statut de disponibilité calculé en temps réel pour chaque livreur :
+     * "occupé" s'il a une livraison ASSIGNEE ou RECUPEREE en cours, sinon "disponible".
+     */
+    public List<com.livraison.livreur.dto.LivreurStatutItem> livreursAvecStatut() {
+        var livreursOccupesIds = livraisonRepository.findByStatutIn(
+                        List.of(com.livraison.livreur.model.LivraisonStatus.ASSIGNEE,
+                                com.livraison.livreur.model.LivraisonStatus.RECUPEREE))
+                .stream()
+                .map(l -> l.getLivreur().getId())
+                .collect(java.util.stream.Collectors.toSet());
+
+        return userRepository.findByRole(UserRole.LIVREUR).stream()
+                .map(l -> new com.livraison.livreur.dto.LivreurStatutItem(l, livreursOccupesIds.contains(l.getId())))
+                .toList();
+    }
+
     public List<com.livraison.livreur.model.User> livreursDisponibles() {
         return userRepository.findByRole(UserRole.LIVREUR);
     }

@@ -4,8 +4,8 @@ import com.livraison.livreur.model.Commande;
 import com.livraison.livreur.model.CommandeStatus;
 import com.livraison.livreur.model.TypeColis;
 import com.livraison.livreur.model.User;
-import com.livraison.livreur.model.UserRole;
 import com.livraison.livreur.security.UserPrincipal;
+import com.livraison.livreur.service.AdminDashboardService;
 import com.livraison.livreur.service.CommandeService;
 import com.livraison.livreur.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,7 @@ public class CommandeController {
 
     private final CommandeService commandeService;
     private final UserService userService;
+    private final AdminDashboardService dashboardService;
 
     // --- Espace Client ---
 
@@ -77,7 +78,7 @@ public class CommandeController {
         List<Commande> orders = commandeService.getAllCommandes();
         model.addAttribute("orders", orders);
         model.addAttribute("username", principal.getUsername());
-        model.addAttribute("livreurs", userService.findByRole(UserRole.LIVREUR));
+        model.addAttribute("livreurs", dashboardService.livreursAvecStatut());
         return "admin/manage-orders";
     }
 

@@ -82,7 +82,7 @@
                                     <th>Colis</th>
                                     <th>Client</th>
                                     <th>Livreur</th>
-                                    <th>Zone</th>
+                                    <th class="col-hide-mobile">Zone</th>
                                     <th>Statut</th>
                                 </tr>
                             </thead>
@@ -91,7 +91,7 @@
                                     <td th:text="'#PF-' + ${item.id}">#PF-0</td>
                                     <td th:text="${item.client}">Client</td>
                                     <td th:text="${item.livreur}">—</td>
-                                    <td th:text="${item.zone}">Zone</td>
+                                    <td class="col-hide-mobile" th:text="${item.zone}">Zone</td>
                                     <td><span th:class="'status-badge status-' + ${item.statut}" th:text="${item.statut}">STATUT</span></td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(dernieresLivraisons)}">
@@ -111,13 +111,14 @@
                         <span class="pill" th:text="${totalLivreurs} + ' au total'">0</span>
                     </div>
                     <div class="people-list">
-                        <div class="people-row" th:each="l : ${livreurs}">
-                            <div class="avatar-sm" th:text="${#strings.substring(l.username,0,1)}">L</div>
+                        <div class="people-row" th:each="item : ${livreurs}">
+                            <div class="avatar-sm" th:text="${#strings.substring(item.livreur.username,0,1)}">L</div>
                             <div>
-                                <div class="name" th:text="${l.username}">Nom</div>
-                                <div class="meta" th:text="${l.telephone}">Téléphone</div>
+                                <div class="name" th:text="${item.livreur.username}">Nom</div>
+                                <div class="meta" th:text="${item.livreur.telephone}">Téléphone</div>
                             </div>
-                            <span class="tag tag-available">Disponible</span>
+                            <span th:if="${!item.occupe}" class="tag tag-available">Disponible</span>
+                            <span th:if="${item.occupe}" class="tag tag-busy">Occupé</span>
                         </div>
                         <div th:if="${#lists.isEmpty(livreurs)}" style="text-align:center; color:var(--text-muted); padding:16px 0;">
                             Aucun livreur enregistré.
