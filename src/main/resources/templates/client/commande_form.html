@@ -167,7 +167,7 @@
                     </details>
                 </div>
 
-                <button type="submit" class="btn-primary">
+                <button type="button" id="openRecapBtn" class="btn-primary">
                     Valider l'expédition
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                 </button>
@@ -179,6 +179,50 @@
     </div>
 
     <div th:replace="~{fragments/shell :: bottomnav('client','new')}"></div>
+</div>
+
+<!-- ============ Pop-up récapitulatif ============ -->
+<div id="recapOverlay" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+        <h2>Récapitulatif de l'expédition</h2>
+        <p class="modal-sub">Vérifiez les informations avant de valider.</p>
+
+        <div class="modal-recap-section">
+            <div class="recap-label">Expéditeur</div>
+            <div class="recap-row"><span class="recap-key">Nom</span><span class="recap-val" id="recapNomExpediteur"></span></div>
+            <div class="recap-row"><span class="recap-key">Ramassage</span><span class="recap-val" id="recapAdresseRamassage"></span></div>
+            <div class="recap-row"><span class="recap-key">Ville</span><span class="recap-val" id="recapVilleRamassage"></span></div>
+        </div>
+
+        <div class="modal-recap-section">
+            <div class="recap-label">Destinataire</div>
+            <div class="recap-row"><span class="recap-key">Nom</span><span class="recap-val" id="recapNomDestinataire"></span></div>
+            <div class="recap-row"><span class="recap-key">Adresse</span><span class="recap-val" id="recapAdresseLivraison"></span></div>
+            <div class="recap-row"><span class="recap-key">Téléphone</span><span class="recap-val" id="recapTelephone"></span></div>
+        </div>
+
+        <div class="modal-recap-section">
+            <div class="recap-label">Colis</div>
+            <div class="recap-row"><span class="recap-key">Type</span><span class="recap-val" id="recapType"></span></div>
+            <div class="recap-row"><span class="recap-key">Poids</span><span class="recap-val" id="recapPoids"></span></div>
+            <div class="recap-row"><span class="recap-key">Distance</span><span class="recap-val" id="recapDistance"></span></div>
+            <div class="recap-row"><span class="recap-key">Valeur déclarée</span><span class="recap-val" id="recapValeur"></span></div>
+        </div>
+
+        <div class="modal-price-box">
+            <div class="label">Total estimé</div>
+            <div class="value" id="recapPrix">— F</div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" id="confirmSubmitBtn" class="btn-primary" style="display:flex;">
+                Confirmer et envoyer
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            </button>
+            <button type="button" id="editBtn" class="btn-modal-edit">Modifier</button>
+            <button type="button" id="cancelBtn" class="btn-modal-cancel">Annuler</button>
+        </div>
+    </div>
 </div>
 <script th:src="@{/js/auth.js}"></script>
 <script>
@@ -201,6 +245,61 @@
 
     document.getElementById('distanceKm').addEventListener('input', estimerPrix);
     document.getElementById('poidsKg').addEventListener('input', estimerPrix);
+
+    // ---------- Pop-up récapitulatif avant envoi ----------
+    var form = document.querySelector('form');
+    var overlay = document.getElementById('recapOverlay');
+
+    function texte(id) {
+        var el = document.getElementById(id);
+        return el ? el.value : '';
+    }
+
+    document.getElementById('openRecapBtn').addEventListener('click', function () {
+        // Vérifie les champs requis avant d'ouvrir la pop-up (validation native du navigateur)
+        if (!form.reportValidity()) {
+            return;
+        }
+
+        document.getElementById('recapNomExpediteur').textContent = texte('nomExpediteur');
+        document.getElementById('recapAdresseRamassage').textContent = texte('adresseRamassage') + ', ' + texte('codePostalRamassage');
+        document.getElementById('recapVilleRamassage').textContent = texte('villeRamassage');
+
+        document.getElementById('recapNomDestinataire').textContent = texte('nomDestinataire');
+        document.getElementById('recapAdresseLivraison').textContent = texte('adresseLivraison') + ', ' + texte('codePostalVilleDestinataire');
+        document.getElementById('recapTelephone').textContent = texte('telephoneDestinataire');
+
+        var typeSelect = document.getElementById('typeColis');
+        document.getElementById('recapType').textContent = typeSelect.options[typeSelect.selectedIndex].text;
+        document.getElementById('recapPoids').textContent = texte('poidsKg') + ' kg';
+        document.getElementById('recapDistance').textContent = texte('distanceKm') + ' km';
+        var valeur = texte('valeurDeclaree');
+        document.getElementById('recapValeur').textContent = valeur ? (parseInt(valeur).toLocaleString('fr-FR') + ' F') : 'Non renseignée';
+
+        document.getElementById('recapPrix').textContent = document.getElementById('priceEstimate').textContent;
+
+        overlay.style.display = 'flex';
+    });
+
+    document.getElementById('confirmSubmitBtn').addEventListener('click', function () {
+        form.submit();
+    });
+
+    document.getElementById('editBtn').addEventListener('click', function () {
+        overlay.style.display = 'none';
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', function () {
+        overlay.style.display = 'none';
+        form.reset();
+        document.getElementById('priceEstimate').textContent = '— F';
+    });
+
+    overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) {
+            overlay.style.display = 'none';
+        }
+    });
 </script>
 </body>
 </html>

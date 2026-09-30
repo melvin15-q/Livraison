@@ -635,6 +635,144 @@ body.app-body {
   gap: 0;
 }
 
+/* ---------- Pop-up de confirmation (récap avant envoi) ---------- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 15, 30, 0.55);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+  padding: 0;
+}
+
+.modal-card {
+  background: #fff;
+  width: 100%;
+  max-width: 480px;
+  max-height: 88vh;
+  overflow-y: auto;
+  border-radius: 22px 22px 0 0;
+  padding: 24px 22px 20px;
+  box-shadow: 0 -10px 40px rgba(15, 23, 42, 0.25);
+}
+
+.modal-card h2 {
+  font-size: 19px;
+  font-weight: 800;
+  margin: 0 0 4px;
+}
+
+.modal-card .modal-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 18px;
+}
+
+.modal-recap-section {
+  margin-bottom: 16px;
+}
+
+.modal-recap-section .recap-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9aa1b5;
+  margin-bottom: 8px;
+}
+
+.recap-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 13.5px;
+  border-bottom: 1px solid #f2f3f8;
+}
+
+.recap-row:last-child {
+  border-bottom: none;
+}
+
+.recap-row .recap-key {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.recap-row .recap-val {
+  font-weight: 600;
+  text-align: right;
+}
+
+.modal-price-box {
+  background: var(--input-bg);
+  border-radius: 14px;
+  padding: 14px;
+  text-align: center;
+  margin: 18px 0 20px;
+}
+
+.modal-price-box .label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #9aa1b5;
+}
+
+.modal-price-box .value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--brand-blue);
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.btn-modal-cancel {
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  border: 1.5px solid #f0c8c8;
+  background: #fff;
+  color: #b3261e;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-modal-edit {
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  border: 1.5px solid var(--input-border);
+  background: #fff;
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .modal-overlay {
+    align-items: center;
+  }
+
+  .modal-card {
+    border-radius: 22px;
+  }
+
+  .modal-actions {
+    flex-direction: row-reverse;
+  }
+}
+
 /* ---------- Responsive breakpoints ---------- */
 
 @media (min-width: 560px) {
